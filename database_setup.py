@@ -27,6 +27,8 @@ class Category(Base):
     user_id = Column(Integer, ForeignKey('user.id'))
     user = relationship(User)
     item_list = relationship("Item", cascade="all, delete-orphan")
+    # Image
+    # image_url = Column(String, nullable=False)
 
     @property
     def serialize(self):
@@ -47,6 +49,8 @@ class Item(Base):
     category = relationship(Category)
     user_id = Column(Integer, ForeignKey('user.id'))
     user = relationship(User)
+    # Image
+    # image_url = Column(String, nullable=False)
 
 
     # Add our decorator method for out JSON response
