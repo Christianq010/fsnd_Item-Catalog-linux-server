@@ -3,7 +3,7 @@
 
 ## Description
 
->This repository contains a Web application that queries a database and then dynamically generates complete web pages and API endpoints.
+> This repository contains a Web application that queries a database and then dynamically generates complete web pages and API endpoints.
 >Set up to use a virtual machine - Vagrant (VM) to run our database server.
 
  > In this project we develop a RESTful web application using the Python framework Flask along with implementing third-party OAuth authentication. Learn when to properly use the various HTTP methods available to you and how these methods relate to CRUD (create, read, update and delete) operations.
