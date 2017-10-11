@@ -15,35 +15,10 @@ Base.metadata.bind=engine
 DBSession = sessionmaker(bind=engine)
 session = DBSession()
 
-"""
-
-# Show Restaurant menu Page in JSON
-@app.route('/catalog/<int:catalog_id>/items/JSON')
-def restaurantMenuJSON(catalog_id):
-    restaurant = session.query(Restaurant).filter_by(id=catalog_id).one()
-    items = session.query(MenuItem).filter_by(catalog_id=catalog_id).all()
-    # Return jsonify class and use loop to serialize all our DB entries
-    return jsonify(MenuItems=[i.serialize for i in items])
-
-
-# Show individual menuItems in the URL in JSON
-@app.route('/catalog/<int:catalog_id>/items/<int:menu_id>/JSON')
-def menuItemJSON(catalog_id, menu_id):
-    menuItem = session.query(MenuItem).filter_by(id=menu_id).one()
-    return jsonify(MenuItem=menuItem.serialize)
-
-
-# Show all restaurants in JSON
-@app.route('/catalog/JSON')
-def restaurantJSON():
-    restaurants = session.query(Restaurant).all()
-    return jsonify(restaurants=[r.serialize for r in restaurants])
-
-"""
 
 # app.route('/') - is python decorator - when browser uses URL, the function specific to that URL gets executed
 
-# Show all Restaurants
+# Show entire Catalog
 @app.route('/')
 @app.route('/catalog/')
 def showCategory():
@@ -111,20 +86,19 @@ def newItem(category_id):
     else:
         return render_template('newItem.html', category_id=category_id)
 
-# Edit an existing Catalog Item name and description
+# Edit an existing Catalog Item name
 @app.route('/catalog/<int:category_id>/<int:item_id>/edit/', methods=['GET', 'POST'])
 def editItem(category_id, item_id):
     editedItem = session.query(Item).filter_by(id=item_id).one()
     if request.method == 'POST':
         if request.form['name']:
             editedItem.name = request.form['name']
-        session.add(editedItem)
-        session.commit()
+            session.add(editedItem)
+            session.commit()
         return redirect(url_for('catalogItemList', category_id=category_id))
     else:
         return render_template(
             'editItem.html', category_id=category_id, item_id=item_id, item=editedItem)
-
 
 # Delete an existing Catalog Item
 @app.route('/catalog/<int:category_id>/<int:item_id>/delete', methods=['GET', 'POST'])
@@ -136,6 +110,32 @@ def deleteItem(category_id, item_id):
         return redirect(url_for('catalogItemList', category_id=category_id))
     else:
         return render_template('deleteItem.html', item=itemToDelete)
+
+
+
+
+# Show Items in Catalog Page in JSON
+@app.route('/catalog/<int:category_id>/items/JSON')
+def catalogItemsJSON(category_id):
+    category = session.query(Category).filter_by(id=category_id).one()
+    items = session.query(Item).filter_by(category_id=category_id).all()
+    # Return jsonify class and use loop to serialize all our DB entries
+    return jsonify(Items=[i.serialize for i in items])
+
+# Show individual Items in the URL in JSON
+@app.route('/catalog/<int:category_id>/items/<int:menu_id>/JSON')
+def itemJSON(category_id, menu_id):
+    item = session.query(Item).filter_by(id=menu_id).one()
+    return jsonify(Item=item.serialize)
+
+# Show all Catalog names in JSON
+@app.route('/catalog/JSON')
+def catalogJSON():
+    catalog = session.query(Category).all()
+    return jsonify(catalog=[r.serialize for r in catalog])
+
+
+
 
 
 # if executed via python interpreter run this function
