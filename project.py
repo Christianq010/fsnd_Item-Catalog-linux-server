@@ -62,34 +62,30 @@ def newCategory():
     else:
         return render_template('newCategory.html')
 
-"""
-
-# Edit an existing Restaurant
-@app.route('/catalog/<int:catalog_id>/edit/', methods=['GET', 'POST'])
-def editRestaurant(catalog_id):
-    editedRestaurant = session.query(Restaurant).filter_by(id=catalog_id).one()
+# Edit an existing Category
+@app.route('/catalog/<int:category_id>/edit/', methods=['GET', 'POST'])
+def editCategory(category_id):
+    editedCategory = session.query(Category).filter_by(id=category_id).one()
     if request.method == 'POST':
         if request.form['name']:
-            editedRestaurant.name = request.form['name']
-            return redirect(url_for('showRestaurants'))
+            editedCategory.name = request.form['name']
+            return redirect(url_for('showCategory'))
     else:
-            return render_template('editRestaurant.html', restaurant=editedRestaurant)
+            return render_template('editCategory.html', category=editedCategory)
 
-
-# Delete an existing Restaurant
-@app.route('/catalog/<int:catalog_id>/delete/', methods=['GET', 'POST'])
-def deleteRestaurant(catalog_id):
-    restaurantToDelete = session.query(Restaurant).filter_by(id=catalog_id).one()
+# Delete an existing Category
+@app.route('/catalog/<int:category_id>/delete/', methods=['GET', 'POST'])
+def deleteCategory(category_id):
+    categoryToDelete = session.query(Category).filter_by(id=category_id).one()
     if request.method == 'POST':
-        session.delete(restaurantToDelete)
+        session.delete(categoryToDelete)
         session.commit()
-        return redirect(url_for('showRestaurants', catalog_id=catalog_id))
+        return redirect(url_for('showCategory', category_id=category_id))
     else:
-        return render_template('deleteRestaurant.html', restaurant=restaurantToDelete)
+        return render_template('deleteCategory.html', category=categoryToDelete)
 
-"""
 
-# Show a Restaurant Menu
+# Show a Catalog Item
 @app.route('/catalog/<int:category_id>/')
 @app.route('/catalog/<int:category_id>/items/')
 def catalogItemList(category_id):
