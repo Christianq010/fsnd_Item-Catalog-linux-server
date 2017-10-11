@@ -6,6 +6,10 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from database_setup import Base, Category, Item, User
 
+# New imports for Login Session / Google Log in
+from flask import session as login_session
+import random, string
+
 # Create an instance of this class with __name__ as the running argument
 app = Flask(__name__)
 
@@ -16,8 +20,21 @@ DBSession = sessionmaker(bind=engine)
 session = DBSession()
 
 
-# app.route('/') - is python decorator - when browser uses URL, the function specific to that URL gets executed
+# Note: app.route('/') - is python decorator - when browser uses URL, the function specific to that URL gets executed
 
+# ------------------------ Login / Signup ---------------------------
+# Create a state token to prevent request
+# Store it in the session for later validation
+@app.route('/login')
+def showLogin():
+    state = ''.join(random.choice(string.ascii_uppercase + string.digits)for x in xrange(32))
+    login_session['state'] = state
+    # Show our validation in a string - return "The current session state is %s" % login_session['state']
+    # return render_template('login.html', STATE=state)
+    return "The current session state is %s" % login_session['state']
+
+
+# -------------------------- Catalog ------------------------------
 # Show entire Catalog
 @app.route('/')
 @app.route('/catalog/')
@@ -60,6 +77,7 @@ def deleteCategory(category_id):
         return render_template('deleteCategory.html', category=categoryToDelete)
 
 
+# ---------------------------- Catalog Items ---------------------------------------
 # Show a Catalog Item
 @app.route('/catalog/<int:category_id>/')
 @app.route('/catalog/<int:category_id>/items/')
@@ -93,8 +111,8 @@ def editItem(category_id, item_id):
     if request.method == 'POST':
         if request.form['name']:
             editedItem.name = request.form['name']
-            session.add(editedItem)
-            session.commit()
+        session.add(editedItem)
+        session.commit()
         return redirect(url_for('catalogItemList', category_id=category_id))
     else:
         return render_template(
@@ -113,7 +131,7 @@ def deleteItem(category_id, item_id):
 
 
 
-
+# ---------------------------------- JSON Endpoints ------------------------------------- 
 # Show Items in Catalog Page in JSON
 @app.route('/catalog/<int:category_id>/items/JSON')
 def catalogItemsJSON(category_id):
