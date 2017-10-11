@@ -89,32 +89,29 @@ def deleteCategory(category_id):
 @app.route('/catalog/<int:category_id>/')
 @app.route('/catalog/<int:category_id>/items/')
 def catalogItemList(category_id):
-    # Add all restaurants and menu items to page
+    # Add entire catalog and items to page
     category = session.query(Category).filter_by(id=category_id).one()
     items = session.query(Item).filter_by(category_id=category_id).all()
     # Render templates in folder and pass our queries above as arguments for our template
     return render_template('item.html', category=category, items=items)
 
-
-"""
-
-# Add a new Menu Item
-@app.route('/catalog/<int:catalog_id>/items/new/', methods=['GET', 'POST'])
-def newMenuItem(catalog_id):
+# Add a new Item
+@app.route('/catalog/<int:category_id>/items/new/', methods=['GET', 'POST'])
+def newItem(category_id):
     # Look for POST request
     if request.method == 'POST':
         # extract 'name' from our form using request.form
-        newItem = MenuItem(name=request.form['name'],catalog_id=catalog_id)
+        newItem = Item(name=request.form['name'],category_id=category_id)
         session.add(newItem)
         session.commit()
         # Our flask message
-        flash("New menu item created!")
-        return redirect(url_for('restaurantMenu', catalog_id=catalog_id))
+        flash("New item for category created!")
+        return redirect(url_for('catalogItemList', category_id=category_id))
     # If a POST request was not received
     else:
-        return render_template('newmenuitem.html', catalog_id=catalog_id)
+        return render_template('newItem.html', category_id=category_id)
 
-
+"""
 # Edit an existing Menu Item
 @app.route('/catalog/<int:catalog_id>/<int:menu_id>/edit/', methods=['GET', 'POST'])
 def editMenuItem(catalog_id, menu_id):

@@ -10,7 +10,7 @@
 
             <h2 class="fh5co-article-title animate-box">{{category.name}}</h2>
 
-            <h3><a href="">Add New Menu Item</a></h3>
+            <h3><a href="{{url_for('newItem', category_id = category.id)}}">Add New Menu Item</a></h3>
 
             <!--MESSAGE FLASHING EXAMPLE -->
             {% with messages = get_flashed_messages() %}
