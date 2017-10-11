@@ -51,19 +51,18 @@ def showCategory():
     return render_template('category.html', categories=categories)
 
 
-"""
-
-# Create new Restaurant
+# Create new Category
 @app.route('/catalog/new/', methods=['GET', 'POST'])
-def newRestaurant():
+def newCategory():
     if request.method == 'POST':
-        newRestaurant = Restaurant(name=request.form['name'])
-        session.add(newRestaurant)
+        newCategory = Category(name=request.form['name'])
+        session.add(newCategory)
         session.commit()
-        return redirect(url_for('showRestaurants'))
+        return redirect(url_for('showCategory'))
     else:
-        return render_template('newRestaurant.html')
+        return render_template('newCategory.html')
 
+"""
 
 # Edit an existing Restaurant
 @app.route('/catalog/<int:catalog_id>/edit/', methods=['GET', 'POST'])
