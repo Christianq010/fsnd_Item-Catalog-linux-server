@@ -95,7 +95,7 @@ def catalogItemList(category_id):
     # Render templates in folder and pass our queries above as arguments for our template
     return render_template('item.html', category=category, items=items)
 
-# Add a new Item
+# Add a new Catalog Item
 @app.route('/catalog/<int:category_id>/items/new/', methods=['GET', 'POST'])
 def newItem(category_id):
     # Look for POST request
@@ -111,34 +111,32 @@ def newItem(category_id):
     else:
         return render_template('newItem.html', category_id=category_id)
 
-"""
-# Edit an existing Menu Item
-@app.route('/catalog/<int:catalog_id>/<int:menu_id>/edit/', methods=['GET', 'POST'])
-def editMenuItem(catalog_id, menu_id):
-    editedItem = session.query(MenuItem).filter_by(id=menu_id).one()
+# Edit an existing Catalog Item name and description
+@app.route('/catalog/<int:category_id>/<int:item_id>/edit/', methods=['GET', 'POST'])
+def editItem(category_id, item_id):
+    editedItem = session.query(Item).filter_by(id=item_id).one()
     if request.method == 'POST':
         if request.form['name']:
             editedItem.name = request.form['name']
         session.add(editedItem)
         session.commit()
-        return redirect(url_for('restaurantMenu', catalog_id=catalog_id))
+        return redirect(url_for('catalogItemList', category_id=category_id))
     else:
         return render_template(
-            'editmenuitem.html', catalog_id=catalog_id, menu_id=menu_id, item=editedItem)
+            'editItem.html', category_id=category_id, item_id=item_id, item=editedItem)
 
 
-# Delete an existing Menu Item
-@app.route('/catalog/<int:catalog_id>/<int:menu_id>/delete', methods=['GET', 'POST'])
-def deleteMenuItem(catalog_id, menu_id):
-    itemToDelete = session.query(MenuItem).filter_by(id=menu_id).one()
+# Delete an existing Catalog Item
+@app.route('/catalog/<int:category_id>/<int:item_id>/delete', methods=['GET', 'POST'])
+def deleteItem(category_id, item_id):
+    itemToDelete = session.query(Item).filter_by(id=item_id).one()
     if request.method == 'POST':
         session.delete(itemToDelete)
         session.commit()
-        return redirect(url_for('restaurantMenu', catalog_id=catalog_id))
+        return redirect(url_for('catalogItemList', category_id=category_id))
     else:
-        return render_template('deletemenuitem.html', item=itemToDelete)
+        return render_template('deleteItem.html', item=itemToDelete)
 
-"""
 
 # if executed via python interpreter run this function
 if __name__ == '__main__':

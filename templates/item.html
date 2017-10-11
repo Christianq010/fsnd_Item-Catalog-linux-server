@@ -33,11 +33,11 @@
             <p>{{i.description}}<cite>&mdash; {{i.id}}</cite></p>
 
                 <button type="button" class="btn btn-warning">
-                    <a href="">Edit</a>
+                    <a href="{{url_for('editItem', category_id=category.id, item_id=i.id )}}">Edit</a>
                 </button>
 
                 <button type="button" class="btn btn-danger">
-                    <a href="">Delete</a>
+                    <a href="{{url_for('deleteItem', category_id=category.id, item_id=i.id )}}">Delete</a>
                 </button>
             </div>
             {% endfor %}
