@@ -36,7 +36,7 @@
 <body>
 
 
-	<!-- Facebook Log in Script
+	<!-- Facebook Log in Script -->
 	<script>
 
         // This is called with the results from from FB.getLoginStatus().
@@ -68,7 +68,7 @@
 
 	  window.fbAsyncInit = function() {
 		FB.init({
-		  appId      : '142950832917276',
+		  appId      : '141704329783894',
 		  cookie     : true,
 		  xfbml      : true,
 		  version    : 'v2.8'
@@ -106,7 +106,7 @@
                           $('#fbLogin').toggle();
                           $('#result').html(result + '</br><h2>Redirecting...</h2>')
                           setTimeout(function() {
-                              window.location.href = "/restaurant";
+                              window.location.href = "/catalog";
                           }, 0500);
                       } else {
                           $('#result').html('Failed to make a server-side call. Check your configuration and console.');
@@ -117,7 +117,7 @@
       }
 
 	</script>
-     / End of Facebook Log in Script-->
+    <!-- / End of Facebook Log in Script-->
 
 
 	<!--Hamburger Menu-->
@@ -213,11 +213,10 @@
                         <!--<span class="hidden-xs">Continue with Facebook</span>-->
 					<!--</span>-->
 
-                    <!--
                     <fb:login-button id="fbLogin" scope="public_profile,email" onlogin="sendTokenToServer();">
                         <a href='javascript:sendTokenToServer()'>Continue with Facebook</a>
                     </fb:login-button>
-                    -->
+                
                     <br>
                     <!--<div class="col-xs-4 col-sm-2">-->
                         <!--<a href="#" class="btn btn-lg btn-block omb_btn-twitter">-->
