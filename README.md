@@ -56,6 +56,13 @@ We're using tools called Vagrant and VirtualBox to install and manage the VM. Yo
 * `vagrant destroy` to destroy your virtual machine. The source code and the content of the data directory will remain unchanged.
 * If you reboot your computer, you will need to run `vagrant up` to restart the VM.
 
+### Create Google Client ID & Secret
+* Create and then Go to your app's page in the Google APIs Console — https://console.developers.google.com/apis
+* From Credentials from the menu on the left.
+* Create an OAuth 2.0 Client ID.
+* Choose Web application.
+* You can then set the authorized JavaScript origins to `http://localhost:5000`.
+
 
 ### Resources
 * Udacity FSND Webcast on setting up Vagrant - https://www.youtube.com/watch?v=djnqoEO2rLc
