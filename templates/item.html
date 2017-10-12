@@ -10,7 +10,7 @@
 
             <h2 class="fh5co-article-title animate-box">{{category.name}}</h2>
 
-            <h3><a href="{{url_for('newItem', category_id = category.id)}}">Add New Menu Item</a></h3>
+            <h3><a href="{{url_for('newItem', category_id = category.id)}}">Add New Catalog Item</a></h3>
 
             <!--MESSAGE FLASHING EXAMPLE -->
             {% with messages = get_flashed_messages() %}
@@ -33,7 +33,11 @@
             <p>{{i.description}}<cite>&mdash; {{i.id}}</cite></p>
 
                 <button type="button" class="btn btn-warning">
-                    <a href="{{url_for('editItem', category_id=category.id, item_id=i.id )}}">Edit</a>
+                    <a href="{{url_for('editItem', category_id=category.id, item_id=i.id )}}">Edit Name</a>
+                </button>
+
+                <button type="button" class="btn btn-info">
+                    <a href="{{url_for('editItemDes', category_id=category.id, item_id=i.id )}}">Edit Description</a>
                 </button>
 
                 <button type="button" class="btn btn-danger">

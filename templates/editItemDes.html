@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+
+
+{% block editItemDescription %}
+
+    <div class="col-md-12 text-center">
+        <h1>Edit Catalog Item Description</h1>
+
+        <form action="{{url_for('editItemDes', category_id=category_id, item_id=item.id )}}" method = 'POST' id="editItemDesform">
+            <p>Description:</p>
+                <input type='text' name='description' placeholder="{{item.description}}">
+            <br>
+                <input type='submit' value='Edit' class="btn btn-warning">
+            <a href="{{url_for('catalogItemList', category_id=item.category_id)}}">Cancel</a>
+        </form>
+
+    </div>
+
+{% endblock %}

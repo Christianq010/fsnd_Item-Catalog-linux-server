@@ -410,6 +410,24 @@ def editItem(category_id, item_id):
         return render_template(
             'editItem.html', category_id=category_id, item_id=item_id, item=editedItem)
 
+# Edit an existing Catalog Item Description
+@app.route('/catalog/<int:category_id>/<int:item_id>/editDescription/', methods=['GET', 'POST'])
+def editItemDes(category_id, item_id):
+    editedItem = session.query(Item).filter_by(id=item_id).one()
+    if 'username' not in login_session:
+        flash("Please Log In or Sign Up to Add Menu Item")
+        return redirect('/login')
+    if request.method == 'POST':
+        if request.form['description']:
+            editedItem.description = request.form['description']
+        session.add(editedItem)
+        session.commit()
+        return redirect(url_for('catalogItemList', category_id=category_id))
+    else:
+        return render_template(
+            'editItemDes.html', category_id=category_id, item_id=item_id, item=editedItem)
+
+
 # Delete an existing Catalog Item
 @app.route('/catalog/<int:category_id>/<int:item_id>/delete', methods=['GET', 'POST'])
 def deleteItem(category_id, item_id):
