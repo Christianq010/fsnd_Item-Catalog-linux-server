@@ -20,7 +20,7 @@
 					<h2 class="fh5co-article-title"><a href="{{url_for('catalogItemList', category_id = category.id)}}">
 						{{category.name}}</a>
 					</h2>
-                    <span class="fh5co-meta fh5co-date"><a href = "">
+                    <span class="fh5co-meta fh5co-date"><a href = "{{url_for('editCategory', category_id = category.id)}}">
                     Edit Restaurant</a>
                     </span>
 					<!--

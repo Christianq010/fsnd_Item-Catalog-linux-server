@@ -41,7 +41,10 @@ session = DBSession()
 
 # Note: app.route('/') - is python decorator - when browser uses URL, the function specific to that URL gets executed
 
+# =================================================================
 # ------------------------ Login / Signup ---------------------------
+# =================================================================
+
 
 # Create a state token to prevent request
 # Store it in the session for later validation
@@ -51,6 +54,8 @@ def showLogin():
     login_session['state'] = state
     # Show our validation in a string - return "The current session state is %s" % login_session['state']
     return render_template('login.html', STATE=state)
+
+# ------------------------------ Google Log in ---------------------------------- /
 
 # Server side code accepting token
 @app.route('/gconnect', methods=['POST'])
@@ -187,6 +192,8 @@ def gdisconnect():
         response.headers['Content-Type'] = 'application/json'
         return response
 
+# ---------------------------------- Facebook Log in --------------------------------- /
+
 # Log in using facebook
 @app.route('/fbconnect', methods=['POST'])
 def fbconnect():
@@ -289,7 +296,10 @@ def disconnect():
         flash("You weren't signed in.")
         return render_template('logout.html')
 
+# =================================================================
 # -------------------------- Catalog ------------------------------
+# =================================================================
+
 # Show entire Catalog
 @app.route('/')
 @app.route('/catalog/')
@@ -304,6 +314,10 @@ def showCategory():
 # Create new Category
 @app.route('/catalog/new/', methods=['GET', 'POST'])
 def newCategory():
+        # If user not logged in return to log in page
+    if 'username' not in login_session:
+        flash("Please Log In or Sign Up to Add Catalog")
+        return redirect('/login')
     if request.method == 'POST':
         newCategory = Category(name=request.form['name'])
         session.add(newCategory)
@@ -316,6 +330,10 @@ def newCategory():
 @app.route('/catalog/<int:category_id>/edit/', methods=['GET', 'POST'])
 def editCategory(category_id):
     editedCategory = session.query(Category).filter_by(id=category_id).one()
+        # If user not logged in return to log in page
+    if 'username' not in login_session:
+        flash("Please Log In or Sign Up to Edit Catalog")
+        return redirect('/login')
     if request.method == 'POST':
         if request.form['name']:
             editedCategory.name = request.form['name']
@@ -327,6 +345,10 @@ def editCategory(category_id):
 @app.route('/catalog/<int:category_id>/delete/', methods=['GET', 'POST'])
 def deleteCategory(category_id):
     categoryToDelete = session.query(Category).filter_by(id=category_id).one()
+        # If user not logged in return to log in page
+    if 'username' not in login_session:
+        flash("Please Log In or Sign Up to Delete Catalog")
+        return redirect('/login')
     if request.method == 'POST':
         session.delete(categoryToDelete)
         session.commit()
@@ -335,7 +357,10 @@ def deleteCategory(category_id):
         return render_template('deleteCategory.html', category=categoryToDelete)
 
 
-# ---------------------------- Catalog Items ---------------------------------------
+# =================================================================
+# ---------------------------- Catalog Items ----------------------
+# =================================================================
+
 # Show a Catalog Item
 @app.route('/catalog/<int:category_id>/')
 @app.route('/catalog/<int:category_id>/items/')
@@ -388,8 +413,10 @@ def deleteItem(category_id, item_id):
         return render_template('deleteItem.html', item=itemToDelete)
 
 
+# ======================================================================================
+# ---------------------------------- JSON Endpoints ------------------------------------ 
+# ======================================================================================
 
-# ---------------------------------- JSON Endpoints ------------------------------------- 
 # Show Items in Catalog Page in JSON
 @app.route('/catalog/<int:category_id>/items/JSON')
 def catalogItemsJSON(category_id):
