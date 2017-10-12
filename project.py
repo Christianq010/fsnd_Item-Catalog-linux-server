@@ -42,7 +42,7 @@ session = DBSession()
 # Note: app.route('/') - is python decorator - when browser uses URL, the function specific to that URL gets executed
 
 # =================================================================
-# ------------------------ Login / Signup ---------------------------
+# ------------------------ Login / Signup -------------------------
 # =================================================================
 
 
@@ -367,9 +367,13 @@ def deleteCategory(category_id):
 def catalogItemList(category_id):
     # Add entire catalog and items to page
     category = session.query(Category).filter_by(id=category_id).one()
+    creator = session.query(User).all()
     items = session.query(Item).filter_by(category_id=category_id).all()
     # Render templates in folder and pass our queries above as arguments for our template
-    return render_template('item.html', category=category, items=items)
+    if 'username' not in login_session:
+        return render_template('publicItems.html', category=category, items=items, creator=creator)
+    else:
+        return render_template('item.html', category=category, items=items, creator=creator)
 
 # Add a new Catalog Item
 @app.route('/catalog/<int:category_id>/items/new/', methods=['GET', 'POST'])
