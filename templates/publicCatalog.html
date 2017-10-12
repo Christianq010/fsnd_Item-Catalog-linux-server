@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+        <!--Header Public Menu Signin Button-->
+		{% block sign %}
+			<li><a href="{{url_for('showLogin')}}"><i class="fa fa-user-o" aria-hidden="true"></i> Signin</a></li>
+		{% endblock %}
+
+{% block publicCatalog %}
+
+
+		<div class="container-fluid">
+
+			<!--Main Restaurant Items-->
+			<div class="row fh5co-post-entry">
+				{% for category in categories %}
+				<article class="col-lg-3 col-md-3 col-sm-3 col-xs-6 col-xxs-12 animate-box">
+					<!--<figure>-->
+						<!--<a href="single.html"><img src="images/pic_1.jpg" alt="Image" class="img-responsive"></a>-->
+					<!--</figure>-->
+					<h2 class="fh5co-article-title"><a href="{{url_for('catalogItemList', category_id = category.id)}}">
+						{{category.name}}</a>
+					</h2>
+                    <span class="fh5co-meta fh5co-date"><a href = "">
+                    Edit Restaurant</a>
+                    </span>
+					<!--
+                    {% for user in users %}
+                        <h4> <span class="fh5co-meta">
+                            Added by
+                            <br>
+                            {{user.name}}
+                        </span></h4>
+                    {% endfor %}
+                    -->
+				</article>
+				{% endfor %}
+			</div>
+		</div>
+
+{% endblock %}

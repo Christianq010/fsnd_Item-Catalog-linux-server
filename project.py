@@ -295,6 +295,9 @@ def disconnect():
 @app.route('/catalog/')
 def showCategory():
     categories = session.query(Category).all()
+    users = session.query(User).all()
+    if 'username' not in login_session:
+        return render_template('publicCatalog.html',categories=categories, users=users)
     return render_template('category.html', categories=categories)
 
 
