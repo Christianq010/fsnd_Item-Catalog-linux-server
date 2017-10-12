@@ -233,7 +233,8 @@ def fbconnect():
     login_session['email'] = data["email"]
     login_session['facebook_id'] = data["id"]
 
-    # # The token must be stored in the login_session in order to properly logout, let's strip out the information before the equals sign in our token
+    # The token must be stored in the login_session in order to properly logout,
+    # let's strip out the information before the equals sign in our token
     login_session['access_token'] = token
 
     # Get user picture
@@ -330,7 +331,6 @@ def newCategory():
 @app.route('/catalog/<int:category_id>/edit/', methods=['GET', 'POST'])
 def editCategory(category_id):
     editedCategory = session.query(Category).filter_by(id=category_id).one()
-        # If user not logged in return to log in page
     if 'username' not in login_session:
         flash("Please Log In or Sign Up to Edit Catalog")
         return redirect('/login')
@@ -345,7 +345,6 @@ def editCategory(category_id):
 @app.route('/catalog/<int:category_id>/delete/', methods=['GET', 'POST'])
 def deleteCategory(category_id):
     categoryToDelete = session.query(Category).filter_by(id=category_id).one()
-        # If user not logged in return to log in page
     if 'username' not in login_session:
         flash("Please Log In or Sign Up to Delete Catalog")
         return redirect('/login')
@@ -378,6 +377,9 @@ def catalogItemList(category_id):
 # Add a new Catalog Item
 @app.route('/catalog/<int:category_id>/items/new/', methods=['GET', 'POST'])
 def newItem(category_id):
+    if 'username' not in login_session:
+        flash("Please Log In or Sign Up to Add Menu Item")
+        return redirect('/login')
     # Look for POST request
     if request.method == 'POST':
         # extract 'name' from our form using request.form
@@ -395,6 +397,9 @@ def newItem(category_id):
 @app.route('/catalog/<int:category_id>/<int:item_id>/edit/', methods=['GET', 'POST'])
 def editItem(category_id, item_id):
     editedItem = session.query(Item).filter_by(id=item_id).one()
+    if 'username' not in login_session:
+        flash("Please Log In or Sign Up to Add Menu Item")
+        return redirect('/login')
     if request.method == 'POST':
         if request.form['name']:
             editedItem.name = request.form['name']
@@ -409,6 +414,9 @@ def editItem(category_id, item_id):
 @app.route('/catalog/<int:category_id>/<int:item_id>/delete', methods=['GET', 'POST'])
 def deleteItem(category_id, item_id):
     itemToDelete = session.query(Item).filter_by(id=item_id).one()
+    if 'username' not in login_session:
+        flash("Please Log In or Sign Up to Add Menu Item")
+        return redirect('/login')
     if request.method == 'POST':
         session.delete(itemToDelete)
         session.commit()
@@ -418,7 +426,7 @@ def deleteItem(category_id, item_id):
 
 
 # ======================================================================================
-# ---------------------------------- JSON Endpoints ------------------------------------ 
+# ---------------------------------- JSON Endpoints ------------------------------------
 # ======================================================================================
 
 # Show Items in Catalog Page in JSON
