@@ -427,7 +427,6 @@ def editItemDes(category_id, item_id):
         return render_template(
             'editItemDes.html', category_id=category_id, item_id=item_id, item=editedItem)
 
-
 # Delete an existing Catalog Item
 @app.route('/catalog/<int:category_id>/<int:item_id>/delete', methods=['GET', 'POST'])
 def deleteItem(category_id, item_id):
