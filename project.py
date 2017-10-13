@@ -6,27 +6,12 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from database_setup import Base, Category, Item, User
 
-# New imports for Login Session / Google Log in
-from flask import session as login_session
-import random, string
-
-# Imports for GConnect
-# store OAuth2 parameters
-from oauth2client.client import flow_from_clientsecrets
-# Catch error in case we run into error during OAuth
-from oauth2client.client import FlowExchangeError
-# comprehenive python http2 client library
-import httplib2
-# convert in memory python objects to JSON
-import json
-# converts our returned function to a real response method sent to our client
-from flask import make_response
-# apache library written in python
-import requests
-
-# For our Google Login
-CLIENT_ID = json.loads(open('client_secret.json', 'r').read())['web']['client_id']
-APPLICATION_NAME = 'Item Catalog'
+# Install using sudo pip install Flask-WTF
+from flask_wtf import FlaskForm 
+from wtforms import StringField, PasswordField, BooleanField
+from wtforms.validators import InputRequired, Email, Length
+from werkzeug.security import generate_password_hash, check_password_hash
+from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
 
 
 # Create an instance of this class with __name__ as the running argument
@@ -38,6 +23,10 @@ Base.metadata.bind=engine
 DBSession = sessionmaker(bind=engine)
 session = DBSession()
 
+login_manager = LoginManager()
+login_manager.init_app(app)
+login_manager.login_view = 'login'
+
 
 # Note: app.route('/') - is python decorator - when browser uses URL, the function specific to that URL gets executed
 
@@ -45,17 +34,30 @@ session = DBSession()
 # ------------------------ Login / Signup -------------------------
 # =================================================================
 
+# Our Log In Form
+class LoginForm(FlaskForm):
+    username = StringField('username', validators=[InputRequired(), Length(min=4, max=15)])
+    password = PasswordField('password', validators=[InputRequired(), Length(min=8, max=80)])
+    remember = BooleanField('remember me')
 
-# Create a state token to prevent request
-# Store it in the session for later validation
+
 @app.route('/login')
 def showLogin():
-    state = ''.join(random.choice(string.ascii_uppercase + string.digits)for x in xrange(32))
-    login_session['state'] = state
-    # Show our validation in a string - return "The current session state is %s" % login_session['state']
-    return render_template('login.html', STATE=state)
+    form = LoginForm()
+    if form.validate_on_submit():
+        user = User.query.filter_by(username=form.username.data).first()
+        if user:
+            if check_password_hash(user.password, form.password.data):
+                login_user(user, remember=form.remember.data)
+                return redirect(url_for('showCategory'))
+        else:
+            flash("Invalid username or password")
+            return render_template('publicCatalog.html')
+        #return '<h1>' + form.username.data + ' ' + form.password.data + '</h1>'
 
+    return render_template('login.html', form=form)
 
+"""
 # =================================================================
 # -------------------------- Catalog ------------------------------
 # =================================================================
@@ -225,6 +227,7 @@ def catalogJSON():
     catalog = session.query(Category).all()
     return jsonify(catalog=[r.serialize for r in catalog])
 
+"""
 
 
 

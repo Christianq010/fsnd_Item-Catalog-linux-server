@@ -15,6 +15,8 @@ class User(Base):
 
     id = Column(Integer, primary_key=True)
     name = Column(String(250), nullable=False)
+    username = Column(String(15), unique=True)
+    password = Column(String(80))
     email = Column(String(250), nullable=False)
     picture = Column(String(250))
 
