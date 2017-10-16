@@ -47,6 +47,7 @@ We're using tools called Vagrant and VirtualBox to install and manage the VM. Yo
 ### Running the Database
 * The PostgreSQL database server will automatically be started inside the VM.
  * Run `psql` inside the VM command-line tool to access it and run SQL statements: eg. `select * from table_name;`
+* Populate the database with some dummy data by running `python data.py` inside the VM.
 
 ### Logging out and in
 * Run `vagrant reload` if you edit the Vagrant file or make other changes to code that would affect the virtual machine.
