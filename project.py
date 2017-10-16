@@ -301,6 +301,7 @@ def disconnect():
 # -------------------------- Catalog ------------------------------
 # =================================================================
 
+
 # Show entire Catalog
 @app.route('/')
 @app.route('/catalog/')
@@ -308,7 +309,9 @@ def showCategory():
     categories = session.query(Category).all()
     users = session.query(User).all()
     if 'username' not in login_session:
-        return render_template('publicCatalog.html',categories=categories, users=users)
+        return render_template('publicCatalog.html',
+                               categories=categories,
+                               users=users)
     return render_template('category.html', categories=categories)
 
 
@@ -327,6 +330,7 @@ def newCategory():
     else:
         return render_template('newCategory.html')
 
+
 # Edit an existing Category
 @app.route('/catalog/<int:category_id>/edit/', methods=['GET', 'POST'])
 def editCategory(category_id):
@@ -339,7 +343,9 @@ def editCategory(category_id):
             editedCategory.name = request.form['name']
             return redirect(url_for('showCategory'))
     else:
-            return render_template('editCategory.html', category=editedCategory)
+            return render_template('editCategory.html',
+                                   category=editedCategory)
+
 
 # Delete an existing Category
 @app.route('/catalog/<int:category_id>/delete/', methods=['GET', 'POST'])
@@ -353,7 +359,8 @@ def deleteCategory(category_id):
         session.commit()
         return redirect(url_for('showCategory', category_id=category_id))
     else:
-        return render_template('deleteCategory.html', category=categoryToDelete)
+        return render_template('deleteCategory.html',
+                               category=categoryToDelete)
 
 
 # =================================================================
@@ -368,11 +375,19 @@ def catalogItemList(category_id):
     category = session.query(Category).filter_by(id=category_id).one()
     creator = session.query(User).all()
     items = session.query(Item).filter_by(category_id=category_id).all()
-    # Render templates in folder and pass our queries above as arguments for our template
+    # Render templates in folder and pass our queries above
+    # as arguments for our template
     if 'username' not in login_session:
-        return render_template('publicItems.html', category=category, items=items, creator=creator)
+        return render_template('publicItems.html',
+                               category=category,
+                               items=items,
+                               creator=creator)
     else:
-        return render_template('item.html', category=category, items=items, creator=creator)
+        return render_template('item.html',
+                               category=category,
+                               items=items,
+                               creator=creator)
+
 
 # Add a new Catalog Item
 @app.route('/catalog/<int:category_id>/items/new/', methods=['GET', 'POST'])
@@ -383,7 +398,7 @@ def newItem(category_id):
     # Look for POST request
     if request.method == 'POST':
         # extract 'name' from our form using request.form
-        newItem = Item(name=request.form['name'],category_id=category_id)
+        newItem = Item(name=request.form['name'], category_id=category_id)
         session.add(newItem)
         session.commit()
         # Our flask message
@@ -393,8 +408,11 @@ def newItem(category_id):
     else:
         return render_template('newItem.html', category_id=category_id)
 
+
 # Edit an existing Catalog Item name
-@app.route('/catalog/<int:category_id>/<int:item_id>/edit/', methods=['GET', 'POST'])
+@app.route('/catalog/<int:category_id>/<int:item_id>/edit/',
+           methods=['GET', 'POST']
+           )
 def editItem(category_id, item_id):
     editedItem = session.query(Item).filter_by(id=item_id).one()
     if 'username' not in login_session:
@@ -408,10 +426,15 @@ def editItem(category_id, item_id):
         return redirect(url_for('catalogItemList', category_id=category_id))
     else:
         return render_template(
-            'editItem.html', category_id=category_id, item_id=item_id, item=editedItem)
+            'editItem.html',
+            category_id=category_id,
+            item_id=item_id,
+            item=editedItem)
+
 
 # Edit an existing Catalog Item Description
-@app.route('/catalog/<int:category_id>/<int:item_id>/editDescription/', methods=['GET', 'POST'])
+@app.route('/catalog/<int:category_id>/<int:item_id>/editDescription/',
+           methods=['GET', 'POST'])
 def editItemDes(category_id, item_id):
     editedItem = session.query(Item).filter_by(id=item_id).one()
     if 'username' not in login_session:
@@ -425,10 +448,16 @@ def editItemDes(category_id, item_id):
         return redirect(url_for('catalogItemList', category_id=category_id))
     else:
         return render_template(
-            'editItemDes.html', category_id=category_id, item_id=item_id, item=editedItem)
+            'editItemDes.html',
+            category_id=category_id,
+            item_id=item_id,
+            item=editedItem)
+
 
 # Delete an existing Catalog Item
-@app.route('/catalog/<int:category_id>/<int:item_id>/delete', methods=['GET', 'POST'])
+@app.route('/catalog/<int:category_id>/<int:item_id>/delete',
+           methods=['GET', 'POST']
+           )
 def deleteItem(category_id, item_id):
     itemToDelete = session.query(Item).filter_by(id=item_id).one()
     if 'username' not in login_session:
@@ -442,9 +471,9 @@ def deleteItem(category_id, item_id):
         return render_template('deleteItem.html', item=itemToDelete)
 
 
-# ======================================================================================
-# ---------------------------------- JSON Endpoints ------------------------------------
-# ======================================================================================
+# ===========================================================================
+# ---------------------------------- JSON Endpoints -------------------------
+# ===========================================================================
 
 # Show Items in Catalog Page in JSON
 @app.route('/catalog/<int:category_id>/items/JSON')
@@ -454,20 +483,19 @@ def catalogItemsJSON(category_id):
     # Return jsonify class and use loop to serialize all our DB entries
     return jsonify(Items=[i.serialize for i in items])
 
+
 # Show individual Items in the URL in JSON
 @app.route('/catalog/<int:category_id>/items/<int:menu_id>/JSON')
 def itemJSON(category_id, menu_id):
     item = session.query(Item).filter_by(id=menu_id).one()
     return jsonify(Item=item.serialize)
 
+
 # Show all Catalog names in JSON
 @app.route('/catalog/JSON')
 def catalogJSON():
     catalog = session.query(Category).all()
     return jsonify(catalog=[r.serialize for r in catalog])
-
-
-
 
 
 # if executed via python interpreter run this function
@@ -479,4 +507,3 @@ if __name__ == '__main__':
     # use to run local server with our application
     # special config for vagrant machine by making our host publicly available
     app.run(host='0.0.0.0', port=5000)
-
