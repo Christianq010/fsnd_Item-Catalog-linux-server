@@ -79,3 +79,8 @@ We're using tools called Vagrant and VirtualBox to install and manage the VM. Yo
 
 ### Resources
 * Udacity FSND Webcast on setting up Vagrant - https://www.youtube.com/watch?v=djnqoEO2rLc
+* Refactor Code to Python PEP 8 style guide
+  * http://pep8online.com/checkresult
+  * https://stackoverflow.com/questions/10739843/how-should-i-format-a-long-url-in-a-python-comment-and-still-be-pep8-compliant
+  * https://stackoverflow.com/questions/1874592/how-to-write-very-long-string-that-conforms-with-pep8-and-prevent-e501
+  * https://stackoverflow.com/questions/40003378/pep8-error-in-import-line-e501-line-too-long
