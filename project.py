@@ -1,14 +1,24 @@
 # Creating and Testing out our first Flask application
 
-from flask import Flask, render_template, request, redirect, url_for, flash, jsonify
+from flask import (
+    Flask,
+    render_template,
+    request, redirect,
+    url_for,
+    flash,
+    jsonify
+)
 # import CRUD Operations from Lesson 1
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from database_setup import Base, Category, Item, User
 
 # New imports for Login Session / Google Log in
-from flask import session as login_session
-import random, string
+from flask import (
+    session as login_session,
+)
+import random
+import string
 
 # Imports for GConnect
 # store OAuth2 parameters
@@ -25,7 +35,8 @@ from flask import make_response
 import requests
 
 # For our Google Login
-CLIENT_ID = json.loads(open('client_secret.json', 'r').read())['web']['client_id']
+CLIENT_ID = json.loads(open('client_secret.json', 'r')
+                       .read())['web']['client_id']
 APPLICATION_NAME = 'Item Catalog'
 
 
@@ -39,8 +50,9 @@ DBSession = sessionmaker(bind=engine)
 session = DBSession()
 
 
-# Note: app.route('/') - is python decorator - when browser uses URL, the function specific to that URL gets executed
-
+""" Note: app.route('/') - is a python decorator -
+when browser uses URL, the function specific to that URL gets executed
+"""
 # =================================================================
 # ------------------------ Login / Signup -------------------------
 # =================================================================
@@ -50,17 +62,21 @@ session = DBSession()
 # Store it in the session for later validation
 @app.route('/login')
 def showLogin():
-    state = ''.join(random.choice(string.ascii_uppercase + string.digits)for x in xrange(32))
+    state = ''.join(random.choice(string.ascii_uppercase + string.digits)
+                    for x in xrange(32))
     login_session['state'] = state
-    # Show our validation in a string - return "The current session state is %s" % login_session['state']
+    # Show our validation in a string -
+    # return "The current session state is %s" % login_session['state']
     return render_template('login.html', STATE=state)
 
-# ------------------------------ Google Log in ---------------------------------- /
+# ------------------------------ Google Log in --------------------------- /
+
 
 # Server side code accepting token
 @app.route('/gconnect', methods=['POST'])
 def gconnect():
-    # Validate state token (client sent to server matches server sent to client)
+    # Validate state token
+    # (client sent to server matches server sent to client)
     if request.args.get('state') != login_session['state']:
         response = make_response(json.dumps('Invalid state parameter.'), 401)
         response.headers['Content-Type'] = 'application/json'
@@ -115,7 +131,9 @@ def gconnect():
     stored_gplus_id = login_session.get('gplus_id')
     if stored_credentials is not None and gplus_id == stored_gplus_id:
         login_session['credentials'] = credentials
-        response = make_response(json.dumps('Current user is already connected.'),200)
+        response = make_response(json.dumps(
+                                 'Current user is already connected.'),
+                                 200)
         response.headers['Content-Type'] = 'application/json'
         return response
 
@@ -146,23 +164,31 @@ def gconnect():
     output += '!</h1>'
     output += '<img src="'
     output += login_session['picture']
-    output += ' " style = "width: 300px; height: 300px;border-radius: 150px;-webkit-border-radius: 150px;-moz-border-radius: 150px;"> '
+    output += ' " style = "width: 300px; height: 300px;' \
+              'border-radius: 150px;-webkit-border-radius: 150px;' \
+              '-moz-border-radius: 150px;"> '
     flash("Welcome, You are now logged in as %s" % login_session['username'])
     print "done!"
     return output
 
+
 # Use login_session to create a New User when signed in
 def createUser(login_session):
-    newUser = User(name=login_session['username'], email=login_session['email'], picture=login_session['picture'])
+    newUser = User(name=login_session['username'],
+                   email=login_session['email'],
+                   picture=login_session['picture'])
     session.add(newUser)
     session.commit()
     user = session.query(User).filter_by(email=login_session['email']).one()
     return user.id
 
-# Pass a user.id into this method return a User object with the associated id number from the DB
+
+# Pass a user.id into this method return a User object
+# with the associated id number from the DB
 def getUserInfo(user_id):
     user = session.query(User).filter_by(id=user_id).one()
     return user
+
 
 # Take am email address and return a user.id if the email exists
 def getUserID(email):
@@ -172,13 +198,15 @@ def getUserID(email):
     except:
         return None
 
+
 # DISCONNECT - Revoke a current user's token and reset their login_session
 @app.route('/gdisconnect')
 def gdisconnect():
     # Only disconnect a connected user
     credentials = login_session.get('credentials')
     if credentials is None:
-        response = make_response(json.dumps('Current user not connected.'), 401)
+        response = make_response(json.dumps('Current user not connected.'),
+                                 401)
         response.headers['Content-Type'] = 'application/json'
         return response
     access_token = credentials.access_token
@@ -188,11 +216,13 @@ def gdisconnect():
 
     if result['status'] != '200':
         # For some reason token was Invalid
-        response = make_response(json.dumps('Failed to revoke token for user'), 400)
+        response = make_response(json.dumps('Failed to revoke token for user'),
+                                 400)
         response.headers['Content-Type'] = 'application/json'
         return response
 
-# ---------------------------------- Facebook Log in --------------------------------- /
+# ---------------------------------- Facebook Log in ---------------------- /
+
 
 # Log in using facebook
 @app.route('/fbconnect', methods=['POST'])
@@ -207,8 +237,9 @@ def fbconnect():
         'web']['app_id']
     app_secret = json.loads(
         open('fb_client_secrets.json', 'r').read())['web']['app_secret']
-    url = 'https://graph.facebook.com/oauth/access_token?grant_type=fb_exchange_token&client_id=%s&client_secret=%s&fb_exchange_token=%s' % (
-        app_id, app_secret, access_token)
+    url = 'https://graph.facebook.com/oauth/access_token?' \
+          'grant_type=fb_exchange_token&client_id=%s&' \
+          'client_secret=%s&fb_exchange_token=%s' % (app_id, app_secret, access_token)
     h = httplib2.Http()
     result = h.request(url, 'GET')[1]
 
@@ -217,7 +248,8 @@ def fbconnect():
     # strip expire tag from access token
     token = result.split(',')[0].split(':')[1].replace('"', '')
 
-    url = 'https://graph.facebook.com/v2.8/me?access_token=%s&fields=name,id,email' % token
+    url = 'https://graph.facebook.com/v2.8/me?' \
+          'access_token=%s&fields=name,id,email' % token
     h = httplib2.Http()
     result = h.request(url, 'GET')[1]
     data = json.loads(result)
@@ -233,12 +265,15 @@ def fbconnect():
     login_session['email'] = data["email"]
     login_session['facebook_id'] = data["id"]
 
-    # The token must be stored in the login_session in order to properly logout,
-    # let's strip out the information before the equals sign in our token
+    """ The token must be stored in the login_session
+    in order to properly logout,
+    let's strip out the information before the equals sign in our token
+    """
     login_session['access_token'] = token
 
     # Get user picture
-    url = 'https://graph.facebook.com/v2.8/me/picture?access_token=%s&redirect=0&height=200&width=200' % token
+    url = 'https://graph.facebook.com/v2.8/me/picture' \
+          '?access_token=%s&redirect=0&height=200&width=200' % token
     h = httplib2.Http()
     result = h.request(url, 'GET')[1]
     data = json.loads(result)
@@ -259,10 +294,13 @@ def fbconnect():
     output += '!</h1>'
     output += '<img src="'
     output += login_session['picture']
-    output += ' " style = "width: 300px; height: 300px;border-radius: 150px;-webkit-border-radius: 150px;-moz-border-radius: 150px;"> '
+    output += ' " style = "width: 300px; height: 300px;' \
+              'border-radius: 150px;-webkit-border-radius: 150px;' \
+              '-moz-border-radius: 150px;"> '
     flash("you are now logged in as %s" % login_session['username'])
     print "done!"
     return output
+
 
 # Disconnect from Facebook
 @app.route('/fbdisconnect')
