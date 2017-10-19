@@ -3,6 +3,8 @@ from sqlalchemy.orm import sessionmaker
 
 from database_setup import Base, Category, Item
 
+import json
+
 engine = create_engine('sqlite:///catalogitems.db')
 # Bind the engine to the metadata of the Base class so that the
 # declaratives can be accessed through a DBSession instance
@@ -19,51 +21,28 @@ DBSession = sessionmaker(bind=engine)
 session = DBSession()
 
 
-# Items for Electronics
-electronics = Category(name="Electronics")
+category_json = json.loads("""{
+  "Categories": [
+    {
+      "name": "Coffee"
+    },
+    {
+      "name": "Tea"
+    },
+    {
+      "name": "Bean"
+    },
+    {
+      "name": "Tablet"
+    }
+  ]
+}""")
 
-session.add(electronics)
-session.commit()
-
-
-item1 = Item(name="TVs", description="Television is a telecommunication medium used for transmitting moving images in monochrome, or in color, and in two or three dimensions and sound.",
-                    category=electronics)
-
-session.add(item1)
-session.commit()
-
-item2 = Item(name="Computers", description="Juicy grilled chicken patty with tomato mayo and lettuce",
-                    category=electronics)
-
-session.add(item2)
-session.commit()
-
-item3 = Item(name="Speakers / Audio Devices", description="Juicy grilled chicken patty with tomato mayo and lettuce",
-                    category=electronics)
-
-session.add(item3)
-session.commit()
-
-item4 = Item(name="Cameras", description="Juicy grilled chicken patty with tomato mayo and lettuce",
-                    category=electronics)
-
-session.add(item4)
-session.commit()
-
-
-# Menu for Phones
-phones_tablets = Category(name="Phones and Tablets")
-
-session.add(phones_tablets)
-session.commit()
-
-item1 = Item(name="iPhone", description="Juicy grilled chicken patty with tomato mayo and lettuce",
-                    category=phones_tablets)
-
-session.add(item1)
-session.commit()
-
-
-
-
+# Add Categories
+for e in category_json['Categories']:
+  category_input = Category(
+    name=str(e['name'])
+    )
+  session.add(category_input)
+  session.commit()
 print "added items!"
