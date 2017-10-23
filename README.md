@@ -3,59 +3,60 @@
 
 ## Description
 
-> This repository contains a Web application that queries a database and then dynamically generates complete web pages and API endpoints.
-> Set up to use a virtual machine - Vagrant (VM) to run our database server.
+_This project is served on an installation of a Linux distribution on a virtual machine - Amazon Lightsail._
 
-> In this project we develop a RESTful web application using the Python framework Flask along with implementing third-party OAuth authentication. Learn when to properly use the various HTTP methods available to you and how these methods relate to CRUD (create, read, update and delete) operations.
+> In this project we develop a RESTful web application using the Python framework Flask along with implementing third-party OAuth authentication. Learn when to properly use the various HTTP methods available to you and how these methods relate to CRUD (create, read, update and delete) operations serve it over our instance of ubuntu created on AWS.
 
-### About Our Projects
+### About Our Project
 
-#### *Item Catalog*
-* We use an Object-Relational Mapping (ORM) layer - SQLAlchemy to interact with our database.
-* `GET` and `POST` requests that translate to CRUD operations.
-* Using the Flask framework for development of our application.
+> This project is a cloned version of the following repository, modified to run on AWS - Lightsail instead of on the local machine.
+https://github.com/Christianq010/fsnd_Item-Catalog
 
-We need to be able to successfully run the virtual machine in order to view our projects.
 
-The VM is a Linux server system that runs on top of your own computer.
-* We can share files easily between our computer and the VM.
-* We'll be running a web service inside the VM which we'll be able to access from our regular browser locally.
+#### Setting up our project to run on our Ubuntu server
+* Create a catalog.wsgi file, with the following contents:
+ ```
+import sys
+import logging
+logging.basicConfig(stream=sys.stderr)
+sys.path.insert(0, "/var/www/fsnd_catalog_project/fsnd_Item-Catalog-linux-server/")
 
-We're using tools called Vagrant and VirtualBox to install and manage the VM. You'll need to install these to run the applications.
+from catalog import app as application
+application.secret_key = 'super_secret_key'
+ ```
+* Rename project.py to __init__.py `mv application.py __init__.py`
 
-## Prerequisites -
-* We'll be using a Unix-style terminal on your computer. On Windows, we recommend using the Git Bash terminal that comes with the Git software (www.git-scm.com).
-* For Windows users, you may use putty (http://www.chiark.greenend.org.uk/~sgtatham/putty/) for SSH implementation.
+#### Installing a virtual environment, flask and other project dependencies
+> Setting up a virtual environment will keep the application and its dependencies isolated from the main system. Changes to it will not affect the cloud server's system configurations.
 
-## Instructions
-* VirtualBox is the software that actually runs the virtual machine. Install VirtualBox - (https://www.virtualbox.org/wiki/Downloads).
-* Vagrant is the software that configures the VM and lets you share files between your host computer and the VM's filesystem. Install Vagrant - (https://www.vagrantup.com/downloads.html).
- * To find out if vagrant has successfully installed type `vagrant --version` into git bash or cmd
+* Use pip to install virtualenv.
+  ```
+  sudo apt-get install python-pip
+  sudo pip install virtualenv
+  ```
 
-## Configure the VM
-* Use Github to fork and clone or download the the repository - https://github.com/udacity/fullstack-nanodegree-vm.
-* Once you download the files and end up with a new local directory containing the VM files.
- * Change to this directory in your terminal with cd.
- * Inside, you will find another directory called vagrant. Change directory to the vagrant directory.
+* `cd` into our `/var/www/fsnd_catalog_project/fsnd_Item-Catalog-linux-server/` folder.
+* Create an instance of the virtual environment and activate it
+```
+sudo virtualenv venv
+source venv/bin/activate
+```
 
-### Start the Virtual Machine
-* Inside the vagrant subdirectory, run the command `vagrant up`
- * This will cause Vagrant to download the Linux operating system and install it. This may take quite a while (many minutes) depending on how fast your Internet connection is.
-* Once you get your shell prompt back. Run `vagrant ssh` to log in to your newly installed Linux VM
- * If you have trouble with an SSH client you may use the authentication information provided and use Putty to explore the VM via SSH
+* Install flask and other dependencies
+```
+sudo pip install Flask
+sudo pip install bleach httplib2 request oauth2client sqlalchemy
+```
+
+* Leave the virtual env with `deactivate` to install the following - `sudo apt install python-psycopg2`
+
+
 
 ### Running the Database
 * The PostgreSQL database server will automatically be started inside the VM.
  * Run `psql` inside the VM command-line tool to access it and run SQL statements: eg. `select * from table_name;`
 * Populate the database with some dummy data by running `python data.py` inside the VM.
 
-### Logging out and in
-* Run `vagrant reload` if you edit the Vagrant file or make other changes to code that would affect the virtual machine.
-* If you type `exit` (or `Ctrl-D`) at the shell prompt inside the VM, you will be logged out, and put back into your host computer's shell. To log back in, make sure you're in the same directory and type `vagrant ssh` again.
-* To exit Vagrant after the test simply type `logout`
-* To momentarily stop Vagrant running in the background when done type `vagrant halt`
-* `vagrant destroy` to destroy your virtual machine. The source code and the content of the data directory will remain unchanged.
-* If you reboot your computer, you will need to run `vagrant up` to restart the VM.
 
 ### Create Google Client ID & Secret
 * Create and then Go to your app's page in the Google APIs Console — https://console.developers.google.com/apis
