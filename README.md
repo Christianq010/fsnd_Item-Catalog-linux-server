@@ -3,8 +3,6 @@
 
 ## Description
 
-> This repository contains a Web application that queries a database and then dynamically generates complete web pages and API endpoints.
-
 _This project is served on an installation of a Linux distribution on a virtual machine - Amazon Lightsail._
 
 > In this project we develop a RESTful web application using the Python framework Flask along with implementing third-party OAuth authentication. Learn when to properly use the various HTTP methods available to you and how these methods relate to CRUD (create, read, update and delete) operations serve it over our instance of ubuntu created on AWS.
@@ -27,6 +25,32 @@ from catalog import app as application
 application.secret_key = 'super_secret_key'
  ```
 * Rename project.py to __init__.py `mv application.py __init__.py`
+
+#### Installing a virtual environment, flask and other project dependencies
+> Setting up a virtual environment will keep the application and its dependencies isolated from the main system. Changes to it will not affect the cloud server's system configurations.
+
+* Use pip to install virtualenv.
+  ```
+  sudo apt-get install python-pip
+  sudo pip install virtualenv
+  ```
+
+* `cd` into our `/var/www/fsnd_catalog_project/fsnd_Item-Catalog-linux-server/` folder.
+* Create an instance of the virtual environment and activate it
+```
+sudo virtualenv venv
+source venv/bin/activate
+```
+
+* Install flask and other dependencies
+```
+sudo pip install Flask
+sudo pip install bleach httplib2 request oauth2client sqlalchemy
+```
+
+* Leave the virtual env with `deactivate` to install the following - `sudo apt install python-psycopg2`
+
+
 
 ### Running the Database
 * The PostgreSQL database server will automatically be started inside the VM.
