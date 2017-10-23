@@ -11,10 +11,22 @@ _This project is served on an installation of a Linux distribution on a virtual 
 
 ### About Our Project
 
-#### *Item Catalog*
-* We use an Object-Relational Mapping (ORM) layer - SQLAlchemy to interact with our database.
-* `GET` and `POST` requests that translate to CRUD operations.
-* Using the Flask framework for development of our application.
+> This project is a cloned version of the following repository, modified to run on AWS - Lightsail instead of on the local machine.
+https://github.com/Christianq010/fsnd_Item-Catalog
+
+
+#### Setting up our project to run on our Ubuntu server
+* Create a catalog.wsgi file, with the following contents:
+ ```
+import sys
+import logging
+logging.basicConfig(stream=sys.stderr)
+sys.path.insert(0, "/var/www/fsnd_catalog_project/fsnd_Item-Catalog-linux-server/")
+
+from catalog import app as application
+application.secret_key = 'super_secret_key'
+ ```
+* Rename project.py to __init__.py `mv application.py __init__.py`
 
 ### Running the Database
 * The PostgreSQL database server will automatically be started inside the VM.
