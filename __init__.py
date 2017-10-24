@@ -37,7 +37,7 @@ import requests
 from functools import wraps
 
 # For our Google Login
-CLIENT_ID = json.loads(open('client_secret.json', 'r')
+CLIENT_ID = json.loads(open('/var/www/FlaskApp/FlaskApp/client_secret.json', 'r')
                        .read())['web']['client_id']
 APPLICATION_NAME = 'Item Catalog'
 
@@ -248,7 +248,7 @@ def fbconnect():
         return response
     access_token = request.data
 
-    app_id = json.loads(open('fb_client_secrets.json', 'r').read())[
+    app_id = json.loads(open('/var/www/FlaskApp/FlaskApp/fb_client_secrets.json', 'r').read())[
         'web']['app_id']
     app_secret = json.loads(
         open('fb_client_secrets.json', 'r').read())['web']['app_secret']
