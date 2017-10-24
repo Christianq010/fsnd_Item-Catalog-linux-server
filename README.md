@@ -19,9 +19,9 @@ https://github.com/Christianq010/fsnd_Item-Catalog
 import sys
 import logging
 logging.basicConfig(stream=sys.stderr)
-sys.path.insert(0, "/var/www/fsnd_catalog_project/fsnd_Item-Catalog-linux-server/")
+sys.path.insert(0, "/var/www/FlaskApp/")
 
-from catalog import app as application
+from FlaskApp import app as application
 application.secret_key = 'super_secret_key'
  ```
 * Rename project.py to __init__.py `mv application.py __init__.py`
@@ -45,7 +45,11 @@ source venv/bin/activate
 * Install flask and other dependencies
 ```
 sudo pip install Flask
-sudo pip install bleach httplib2 request oauth2client sqlalchemy
+sudo pip install bleach 
+sudo pip install httplib2
+sudo pip install requests
+sudo pip install oauth2client 
+sudo pip install sqlalchemy
 ```
 
 * Leave the virtual env with `deactivate` to install the following - `sudo apt install python-psycopg2`
