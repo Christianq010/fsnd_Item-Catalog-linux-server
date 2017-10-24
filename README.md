@@ -14,7 +14,8 @@ https://github.com/Christianq010/fsnd_Item-Catalog
 
 
 #### Setting up our project to run on our Ubuntu server
-* Create a catalog.wsgi file, with the following contents:
+* Create a catalog.wsgi file - `sudo nano flaskapp.wsgi`,
+with the following contents:
  ```
 import sys
 import logging
@@ -34,8 +35,9 @@ application.secret_key = 'super_secret_key'
   sudo apt-get install python-pip
   sudo pip install virtualenv
   ```
+*  Install the following as well - `sudo apt install python-psycopg2`
 
-* `cd` into our `/var/www/fsnd_catalog_project/fsnd_Item-Catalog-linux-server/` folder.
+* `cd` into our `/var/www/FlaskApp/FlaskApp` folder.
 * Create an instance of the virtual environment and activate it
 ```
 sudo virtualenv venv
@@ -51,8 +53,7 @@ sudo pip install requests
 sudo pip install oauth2client 
 sudo pip install sqlalchemy
 ```
-
-* Leave the virtual env with `deactivate` to install the following - `sudo apt install python-psycopg2`
+* Leave the virtual env with `deactivate`.
 
 
 
