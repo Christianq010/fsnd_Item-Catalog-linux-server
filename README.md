@@ -55,7 +55,30 @@ sudo pip install sqlalchemy
 ```
 * Leave the virtual env with `deactivate`.
 
-
+### Install and Configure our PostgreSQL database
+* Install - `sudo apt-get install postgresql postgresql-contrib`
+* Log in as user - `postgres` (a user created during installation) and create the following tables.
+  * Log in with `sudo su - postgres`
+  * Run `psql` in terminal
+* Create a user named `catalog` with password `123456`
+```sql
+CREATE USER catalog WITH PASSWORD '123456';
+```
+* Give this user the ability to create databases
+```sql
+ALTER USER catalog CREATEDB;
+```
+* Then create a database managed by that user
+```sql
+CREATE DATABASE catalog OWNER catalog;
+```
+* Connect to our newly created database - `\c catalog`
+* once connected to the database, lock down the permissions to only let `catalog` create tables:
+```sql
+REVOKE ALL ON SCHEMA public FROM public;
+GRANT ALL ON SCHEMA public TO catalog;
+```
+* Log out of the `psql` terminal with `\q`, and then use `exit` to logout/ switch back to our `grader` user.
 
 ### Running the Database
 * The PostgreSQL database server will automatically be started inside the VM.
