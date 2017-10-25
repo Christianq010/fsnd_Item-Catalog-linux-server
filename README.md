@@ -31,7 +31,7 @@ https://github.com/Christianq010/fsnd_linux_config_aws
 
 ## Main Changes made to our Item Catalog Project.
 
-* Rename project.py to __init__.py `mv application.py __init__.py`
+* Rename project.py to **__init__.py** with `mv application.py __init__.py`
 * Refactor the following files - `__init__.py`,`database_setup.py`,`data.py` to contain our new database connection.
 ```python
 engine = create_engine('postgresql://catalog:123456@localhost/catalog')
