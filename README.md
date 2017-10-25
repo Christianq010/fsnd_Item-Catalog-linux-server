@@ -9,105 +9,78 @@ _This project is served on an installation of a Linux distribution on a virtual 
 
 ### About Our Project
 
-> This project is a cloned version of the following repository, modified to run on AWS - Lightsail instead of on the local machine.
+> This project is a cloned version of the following repository, modified to run on AWS - Lightsail instead of on the local virtual machine(vagrant).
 https://github.com/Christianq010/fsnd_Item-Catalog
 
+### *Item Catalog*
+* We use an Object-Relational Mapping (ORM) layer - SQLAlchemy to interact with our database.
+* `GET` and `POST` requests that translate to CRUD operations.
+* Using the Flask framework for development of our application.
 
-#### Setting up our project to run on our Ubuntu server
-* Create a catalog.wsgi file - `sudo nano flaskapp.wsgi`,
-with the following contents:
- ```
-import sys
-import logging
-logging.basicConfig(stream=sys.stderr)
-sys.path.insert(0, "/var/www/FlaskApp/")
+## Setting up our project to run on our Ubuntu server
 
-from FlaskApp import app as application
-application.secret_key = 'super_secret_key'
- ```
+> A detailed description of the steps taken to set up our Ubuntu server can be found here - 
+https://github.com/Christianq010/fsnd_linux_config_aws
+
+> These steps include 
+  > Creating our .wsgi file, 
+  > Installing our virtual environment(venv), flask and other dependencies. 
+  > Installing and configuring our PostgreSQL database.
+  > Configure / Enable a new virtual host (.conf file)
+
+
+## Main Changes made to our Item Catalog Project.
+
 * Rename project.py to __init__.py `mv application.py __init__.py`
-
-#### Installing a virtual environment, flask and other project dependencies
-> Setting up a virtual environment will keep the application and its dependencies isolated from the main system. Changes to it will not affect the cloud server's system configurations.
-
-* Use pip to install virtualenv.
-  ```
-  sudo apt-get install python-pip
-  sudo pip install virtualenv
-  ```
-*  Install the following as well - `sudo apt install python-psycopg2`
-
-* `cd` into our `/var/www/FlaskApp/FlaskApp` folder.
-* Create an instance of the virtual environment and activate it
+* Refactor the following files - `__init__.py`,`database_setup.py`,`data.py` to contain our new database connection.
+```python
+engine = create_engine('postgresql://catalog:123456@localhost/catalog')
 ```
-sudo virtualenv venv
-source venv/bin/activate
+* Include the full file path on any code using the `.open` method.
+```python
+app_id = json.loads(open('/var/www/FlaskApp/FlaskApp/fb_client_secrets.json', 'r').read())[
+        'web']['app_id']
 ```
-
-* Install flask and other dependencies
-```
-sudo pip install Flask
-sudo pip install bleach 
-sudo pip install httplib2
-sudo pip install requests
-sudo pip install oauth2client 
-sudo pip install sqlalchemy
-```
-* Leave the virtual env with `deactivate`.
-
-### Install and Configure our PostgreSQL database
-* Install - `sudo apt-get install postgresql postgresql-contrib`
-* Log in as user - `postgres` (a user created during installation) and create the following tables.
-  * Log in with `sudo su - postgres`
-  * Run `psql` in terminal
-* Create a user named `catalog` with password `123456`
-```sql
-CREATE USER catalog WITH PASSWORD '123456';
-```
-* Give this user the ability to create databases
-```sql
-ALTER USER catalog CREATEDB;
-```
-* Then create a database managed by that user
-```sql
-CREATE DATABASE catalog OWNER catalog;
-```
-* Connect to our newly created database - `\c catalog`
-* once connected to the database, lock down the permissions to only let `catalog` create tables:
-```sql
-REVOKE ALL ON SCHEMA public FROM public;
-GRANT ALL ON SCHEMA public TO catalog;
-```
-* Log out of the `psql` terminal with `\q`, and then use `exit` to logout/ switch back to our `grader` user.
-
-### Running the Database
-* The PostgreSQL database server will automatically be started inside the VM.
- * Run `psql` inside the VM command-line tool to access it and run SQL statements: eg. `select * from table_name;`
-* Populate the database with some dummy data by running `python data.py` inside the VM.
-
-
-### Create Google Client ID & Secret
-* Create and then Go to your app's page in the Google APIs Console — https://console.developers.google.com/apis
+### Update Google / Facebook Sign in Info
+* For our [Google Log in](https://console.developers.google.com/apis/credentials/)
 * From Credentials from the menu on the left.
 * Create an OAuth 2.0 Client ID.
 * Choose Web application.
-* You can then set the authorized JavaScript origins to `http://localhost:5000`.
+   * Add to our Authorized Javascript origins
+   ```
+   http://35.154.1.22
+   http://ec2-35-154-1-22.ap-south-1.compute.amazonaws.com
+   ```
+   * Add to our Authorized redirect URIs
+   ```
+   http://ec2-35-154-1-22.ap-south-1.compute.amazonaws.com/catalog 
+   http://ec2-35-154-1-22.ap-south-1.compute.amazonaws.com/login 
+   http://ec2-35-154-1-22.ap-south-1.compute.amazonaws.com/gconnect 
+   http://ec2-35-154-1-22.ap-south-1.compute.amazonaws.com/gdisconnect
+   ```
+   * Download the new client_secrets.json file and update our `/var/www/FlaskApp/FlaskApp/client_secret.json` with its contents.
 
-### Create Facebook Client and Secret
-* Create and then Go to your app's page in the Facebook Developers Console — https://developers.facebook.com/apps/
-* Go to Settings from the menu on the left and select Add Product.
-* Create Facebook Log in, configure Client OAuth Settings and Valid OAuth redirect URIs (http://localhost:5000) etc and save changes.
-* Add your relevant APP ID to the Facebook Log in Script in `login.html`.
-* Set the APP ID and APP Secret in the `fb_client_secrets.json` file.
+* For our [Facebook Log in](https://developers.facebook.com/apps/)
+   * On App, go to our Facebook Login Settings and save the following in the Valid OAuth redirect URIs
+   ```
+   http://35.154.1.22
+   http://35.154.1.22/login
+   http://35.154.1.22/catalog
+   http://ec2-35-154-1-22.ap-south-1.compute.amazonaws.com
+   http://ec2-35-154-1-22.ap-south-1.compute.amazonaws.com/catalog 
+   http://ec2-35-154-1-22.ap-south-1.compute.amazonaws.com/login
+   ```
+   * Add your relevant APP ID to the Facebook Log in Script in `login.html`.
+   * Set the APP ID and APP Secret in the `fb_client_secrets.json` file.
 
-### API Endpoints
+
+## API Endpoints
 * Show all Catalog names in JSON - `/catalog/JSON`.
 * Show Items in Specific Catalog Page in JSON - `/catalog/<int:category_id>/items/JSON`
 * Show individual Items in the URL in JSON - `/catalog/<int:category_id>/items/<int:menu_id>/JSON`
 
 
 ### Resources
-* Udacity FSND Webcast on setting up Vagrant - https://www.youtube.com/watch?v=djnqoEO2rLc
 * Refactor Code to Python PEP 8 style guide
   * http://pep8online.com/checkresult
   * https://stackoverflow.com/questions/10739843/how-should-i-format-a-long-url-in-a-python-comment-and-still-be-pep8-compliant
